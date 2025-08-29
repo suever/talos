@@ -36,6 +36,7 @@ type ClusterConfig interface {
 	Etcd() Etcd
 	Network() ClusterNetwork
 	LocalAPIServerPort() int
+	ServiceAccountIssuers() []string
 	CoreDNS() CoreDNS
 	// ExternalCloudProvider returns external cloud provider settings.
 	ExternalCloudProvider() ExternalCloudProvider

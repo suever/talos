@@ -135,6 +135,16 @@ func (c *ClusterConfig) LocalAPIServerPort() int {
 	return c.ControlPlane.LocalAPIServerPort
 }
 
+// ServiceAccountIssuers implements the config.ClusterConfig interface.
+func (c *ClusterConfig) ServiceAccountIssuers() []string {
+	if c.ControlPlane == nil || len(c.ControlPlane.ServiceAccountIssuers) == 0 {
+		// Fallback to endpoint-based issuer for backward compatibility
+		return []string{c.Endpoint().String()}
+	}
+
+	return c.ControlPlane.ServiceAccountIssuers
+}
+
 // CoreDNS implements the config.ClusterConfig interface.
 func (c *ClusterConfig) CoreDNS() config.CoreDNS {
 	if c.CoreDNSConfig == nil {
