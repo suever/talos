@@ -201,6 +201,7 @@ func NewControlPlaneAPIServerController() *ControlPlaneAPIServerController {
 					PodSecurityPolicyEnabled: !cfgProvider.Cluster().APIServer().DisablePodSecurityPolicy(),
 					AdvertisedAddress:        advertisedAddress,
 					Resources:                convertResources(cfgProvider.Cluster().APIServer().Resources()),
+					ServiceAccountIssuers:    cfgProvider.Cluster().ServiceAccountIssuers(),
 				}
 
 				return nil

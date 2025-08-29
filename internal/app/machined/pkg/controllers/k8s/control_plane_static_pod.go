@@ -390,7 +390,6 @@ func (ctrl *ControlPlaneStaticPodController) manageAPIServer(ctx context.Context
 		"kubelet-client-certificate":       filepath.Join(constants.KubernetesAPIServerSecretsDir, "apiserver-kubelet-client.crt"),
 		"kubelet-client-key":               filepath.Join(constants.KubernetesAPIServerSecretsDir, "apiserver-kubelet-client.key"),
 		"secure-port":                      strconv.FormatInt(int64(cfg.LocalPort), 10),
-		"service-account-issuer":           cfg.ControlPlaneEndpoint,
 		"service-account-key-file":         filepath.Join(constants.KubernetesAPIServerSecretsDir, "service-account.pub"),
 		"service-account-signing-key-file": filepath.Join(constants.KubernetesAPIServerSecretsDir, "service-account.key"),
 		"service-cluster-ip-range":         strings.Join(cfg.ServiceCIDRs, ","),
@@ -411,11 +410,22 @@ func (ctrl *ControlPlaneStaticPodController) manageAPIServer(ctx context.Context
 
 	handleKubeAPIServerAuthorizationFlags(k8sVersion, builder, cfg.ExtraArgs)
 
+	// Set service account issuers (supports multiple for zero-downtime endpoint migration)
+	if len(cfg.ServiceAccountIssuers) > 0 {
+		for _, issuer := range cfg.ServiceAccountIssuers {
+			builder.Set("service-account-issuer", issuer)
+		}
+	} else {
+		// Fallback to control plane endpoint for backward compatibility
+		builder.Set("service-account-issuer", cfg.ControlPlaneEndpoint)
+	}
+
 	mergePolicies := argsbuilder.MergePolicies{
 		"enable-admission-plugins": argsbuilder.MergeAdditive,
 		"feature-gates":            argsbuilder.MergeAdditive,
 		"authorization-mode":       argsbuilder.MergeAdditive,
 		"tls-cipher-suites":        argsbuilder.MergeAdditive,
+		"service-account-issuer":   argsbuilder.MergeAdditive,
 
 		"etcd-servers":                     argsbuilder.MergeDenied,
 		"client-ca-file":                   argsbuilder.MergeDenied,

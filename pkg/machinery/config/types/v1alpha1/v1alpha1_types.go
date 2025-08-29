@@ -1090,6 +1090,13 @@ type ControlPlaneConfig struct {
 	//     This may be different than the port portion listed in the endpoint field above.
 	//     The default is `6443`.
 	LocalAPIServerPort int `yaml:"localAPIServerPort,omitempty"`
+	//   description: |
+	//     Service account issuers list for zero-downtime endpoint migration.
+	//     The first issuer in the list generates new tokens, while all issuers validate existing tokens.
+	//     This allows for seamless control plane endpoint changes without disrupting authentication.
+	//   examples:
+	//     - value: '[]string{"https://old-endpoint.example.com:6443", "https://new-endpoint.example.com:6443"}'
+	ServiceAccountIssuers []string `yaml:"serviceAccountIssuers,omitempty"`
 }
 
 var _ config.APIServer = (*APIServerConfig)(nil)

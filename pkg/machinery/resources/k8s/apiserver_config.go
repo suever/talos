@@ -57,6 +57,7 @@ type APIServerConfigSpec struct {
 	PodSecurityPolicyEnabled bool              `yaml:"podSecurityPolicyEnabled" protobuf:"10"`
 	AdvertisedAddress        string            `yaml:"advertisedAddress" protobuf:"11"`
 	Resources                Resources         `yaml:"resources" protobuf:"12"`
+	ServiceAccountIssuers    []string          `yaml:"serviceAccountIssuers" protobuf:"13"`
 }
 
 // NewAPIServerConfig returns new APIServerConfig resource.
